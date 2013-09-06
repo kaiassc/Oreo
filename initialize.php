@@ -3,7 +3,7 @@
 	error_reporting( E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE|E_USER_ERROR );
 	//ini_set('display_errors', '1');
 	
-	$oreo_version = "0.9.7";
+	$oreo_version = "1.0.1";
 	
 	//      1 < 1.0
 	//    1.0 < 1.01
@@ -116,4 +116,3 @@
 	$RetainTmpXML = false;
 	
 	
-?>

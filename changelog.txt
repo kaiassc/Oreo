@@ -85,9 +85,15 @@ Since 0.9.6
 	Added $unitdata array to data files
 	Added range and min function for deathcounters
 	Added enableDoodadState() and disableDoodadState() for UnitGroup class
+	Added isUnitType to IndexedUnit
+	Better error handling
+	Fixed a bug in $deathcounter->productOf()
 	
 	Added SetClassFolder for autoloading classes. 
 	Made Location constructor use __construct() instead of Location().
+	
+Since 1.0.1
+	
 	
 	
 Todo

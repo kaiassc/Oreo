@@ -3,21 +3,10 @@
 	// Nested If Trigger
 	function _if() {
 		
-		$argnum = func_num_args();
+		// Accumulate conditions
+		$switchlist = new SwitchList();
+		$conditions = AggrigateConditions(func_get_args(), $switchlist);
 		
-		if ( $argnum > 0 ) { 
-			$conditions = '';
-			$switchlist = new SwitchList();
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if( is_array($arg) ) {
-					$conditions .= $arg[0];
-					$switchlist->addSwitch($arg[1]);
-				} elseif ( $arg ) {
-					$conditions .= $arg;	
-				}
-			}
-		}
 		$nestswitch = new TempSwitch();
 		OrReplace($conditions, $switchlist, $nestswitch);
 		return new IfClass($conditions, $switchlist, $nestswitch);
@@ -26,21 +15,10 @@
 	// Muted If Trigger
 	function mute_if() {
 		
-		$argnum = func_num_args();
+		// Accumulate conditions
+		$switchlist = new SwitchList();
+		$conditions = AggrigateConditions(func_get_args(), $switchlist);
 		
-		if ( $argnum > 0 ) { 
-			$conditions = '';
-			$switchlist = new SwitchList();
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if( is_array($arg) ) {
-					$conditions .= $arg[0];
-					$switchlist->addSwitch($arg[1]);
-				} elseif ( $arg ) {
-					$conditions .= $arg;
-				}
-			}
-		}
 		OrReplace($conditions, $switchlist);
 		return new IfClass($conditions, $switchlist, null, true);
 	}
@@ -135,6 +113,64 @@
 		return substr_count($text, ENDT());
 	}
 	
+	function AggrigateConditions($array, SwitchList &$switchlist, $add_ORs = false){
+		$conditiontext = '';
+		
+		foreach($array as $condition){
+			if( is_array($condition) ){
+				list($c, $switches) = $condition;
+				$switchlist->addSwitch($switches);
+				
+				if( isset($c) ){
+					if($c instanceof Deathcounter){
+						$conditiontext .= $c->atLeast(1);
+					} else {
+						$conditiontext .= $c;
+					}
+				}
+				
+			} else{
+				if( isset($condition) ){
+					if($condition instanceof Deathcounter){
+						$conditiontext .= $condition->atLeast(1);
+					} else {
+						$conditiontext .= $condition;
+					}
+				}
+			}
+			if($add_ORs == true){
+				$conditiontext .= _OR;
+			}
+		}
+		
+		// remove last _OR
+		if($add_ORs == true){
+			$conditiontext = substr($conditiontext, 0, -strlen(_OR));
+		}
+		
+		return $conditiontext;
+	}
+	
+	function AggrigateActions($array){
+		$actiontext = '';
+		
+		foreach($array as $action){
+			if($action !== null && $action !== e){
+				if( is_string($action) ){
+					$actiontext .= $action;
+				} else{
+					
+					$type = gettype($action);
+					if($type === gettype(new STDClass)){
+						$type = get_class($action);
+					}
+					Error("Trigger was expecting a String for an Action, instead got a: $type");
+				}
+			}
+		}
+		
+		return $actiontext;
+	}
 	
 	function OutputTriggers($text, $linenumber = null, $prepend = false){
 		// Remove extraneous triggers and replace playerx
@@ -287,12 +323,10 @@
 
 	function orGroup($conditions) {
 
-		$argnum = func_num_args();
-		
 		// Check for _ORs
-		if ( $argnum == 1 ){
+		if ( func_num_args() === 1 ){
 			// If the end of the string is an _OR, then remove it
-			if ( substr($conditions,-1*strlen(_OR)) == _OR ){
+			if ( substr($conditions, -strlen(_OR)) == _OR ){
 				$conditions = substr($conditions,0,-1*strlen(_OR));
 			}
 			// If there are no _ORs within theres no need to group
@@ -300,6 +334,10 @@
 		}
 		
 		// Accumulate conditions and switchlist and add _ORs between
+		$switchlist = new SwitchList();
+		$conditions = AggrigateConditions(func_get_args(), $switchlist, true);
+		
+		/** // old code
 		if ( $argnum > 0 ) {
 			$conditions = '';
 			$switchlist = new SwitchList();
@@ -317,6 +355,7 @@
 				}
 			}
 		}
+		/**/
 		
 		$switch1 = new TempSwitch();
 
@@ -363,13 +402,10 @@
 				}
 			}
 		}
+		
 		// Accumulate actions
-		if ( func_num_args() > 1 ) { 
-			for ( $i=1; $i <=func_num_args(); $i++ ) {
-				$arg = func_get_arg($i);
-				$text .= $arg;
-			}
-		}
+		$text = AggrigateActions(func_get_args());
+		
 		// Insert entry into array
 		CullTriggers($text);
 		InsertAnalysis($line, CountTriggers($text));
@@ -406,11 +442,51 @@
 		return "Usage Error:<br /><br />".$text."</pre>";
 	}
 	
+	function FriendlyErrorType($type){ 
+	    switch($type){ 
+	        case E_ERROR: // 1 // 
+	            return 'E_ERROR'; 
+	        case E_WARNING: // 2 // 
+	            return 'E_WARNING'; 
+	        case E_PARSE: // 4 // 
+	            return 'E_PARSE'; 
+	        case E_NOTICE: // 8 // 
+	            return 'E_NOTICE'; 
+	        case E_CORE_ERROR: // 16 // 
+	            return 'E_CORE_ERROR'; 
+	        case E_CORE_WARNING: // 32 // 
+	            return 'E_CORE_WARNING'; 
+	        case E_COMPILE_ERROR: // 64 // 
+	            return 'E_COMPILE_ERROR'; 
+	        case E_COMPILE_WARNING: // 128 // 
+	            return 'E_COMPILE_WARNING'; 
+	        case E_USER_ERROR: // 256 // 
+	            return 'E_USER_ERROR'; 
+	        case E_USER_WARNING: // 512 // 
+	            return 'E_USER_WARNING'; 
+	        case E_USER_NOTICE: // 1024 // 
+	            return 'E_USER_NOTICE'; 
+	        case E_STRICT: // 2048 // 
+	            return 'E_STRICT'; 
+	        case E_RECOVERABLE_ERROR: // 4096 // 
+	            return 'E_RECOVERABLE_ERROR'; 
+	        case E_DEPRECATED: // 8192 // 
+	            return 'E_DEPRECATED'; 
+	        case E_USER_DEPRECATED: // 16384 // 
+	            return 'E_USER_DEPRECATED'; 
+	    } 
+	    return ""; 
+	}
+	
 	function handleShutdown() {
 		$error = error_get_last();
-		if($error !== NULL && ( $error['type'] == E_COMPILE_ERROR || $error['type'] == E_ERROR || $error['type'] == E_PARSE || $error['type'] == E_USER_ERROR ) ){
+		if( $error !== NULL && 
+			(   $error['type'] == E_COMPILE_ERROR || $error['type'] == E_ERROR || $error['type'] == E_PARSE || $error['type'] == E_USER_ERROR || 
+				$error['type'] == E_RECOVERABLE_ERROR || $error['type'] == E_CORE_ERROR 
+			) 
+		  ){
 			if( $error['type'] !== E_USER_ERROR ){
-				echo "</textarea><br /><span style='color:red'>Error in ".basename($error['file'])." line ".$error['line'].": ".$error['message'] .PHP_EOL."</span>";
+				echo "</textarea><br /><span style='color:red'>".FriendlyErrorType($error['type']).":<br />Error in ".basename($error['file'])." line ".$error['line'].": ".$error['message'] .PHP_EOL."</span>";
 			} else {
 				echo "</textarea><br /><span style='color:red'>".$error['message']."</span>";
 			}
@@ -420,7 +496,8 @@
 					unlink($XMLDocPath);
 				}
 			}
-		} else {
+		} 
+		else {
 			global $ScriptTimer;
 			global $TriggerCount;
 			global $DeathcounterUnits;
@@ -702,7 +779,7 @@
 					
 					// Update ajax
 					window.onload = function() {
-						prependtrigs();
+						<?php if($PrependTrigs){ echo "prependtrigs();"; } ?>
 						
 						var xmlhttp;
 						if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -825,7 +902,7 @@
 		
 		// Error if they use too many properties
 		if ( $index >= 64 ){
-			Error("Error: Starcraft only supports at most 64 unique 'create unit with property' combinations. This is your 65th!", E_USER_ERROR );
+			Error("Starcraft only supports at most 64 unique 'create unit with property' combinations. This is your 65th!");
 		}
 		
 		return $index+1;
@@ -1032,22 +1109,11 @@
 	}
 	
 	function BundleConditions($conditions){
-		$conditions = '';
-		$switchlist = new SwitchList();
 		
 		// Accumulate conditions
-		$argnum = func_num_args() - 1;
-		if ( $argnum > 0 ) { 
-			for ( $i=1; $i < $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if( is_array($arg) ) {
-					$conditions .= $arg[0];
-					$switchlist->addSwitch($arg[1]);
-				} elseif ( $arg ) {
-					$conditions .= $arg;
-				}
-			}
-		}
+		$switchlist = new SwitchList();
+		$conditions = AggrigateConditions(func_get_args(), $switchlist);
+		
 		return array($conditions, $switchlist);
 	}
 	
@@ -1097,4 +1163,3 @@
 		$text = strtr($text, $CharSwap2);
 	}
 	
-?>

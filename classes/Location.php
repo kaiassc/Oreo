@@ -51,7 +51,15 @@ class Location{
 	public function ping() {
 		return MinimapPing($this);
 	}
-		
+	
+	
+	// Aesthetics
+	
+	public function explode($player = P8){
+		return
+		CreateUnitWithProperties($player,'Terran Wraith',1, $this, Cloaked).
+		KillUnit($player, 'Terran Wraith');
+	}
+	
 }
 
-?>

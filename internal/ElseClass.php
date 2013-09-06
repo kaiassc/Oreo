@@ -27,17 +27,8 @@ class ElseClass{
 	
 	public function _else() {
 	
-		// Accumulate arguments into actions string
-		$argnum = func_num_args();
-		$actions = '';
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg && $arg != 'e' ) {
-					$actions .= $arg;
-				}
-			}
-		}
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
 		
 		
 		$text = &$this->IfText;
@@ -84,24 +75,10 @@ class ElseClass{
 	
 	public function _elseif() {
 
-		$argnum = func_num_args();
-		$conditions = '';
+		// Accumulate conditions
 		$switchlist = new SwitchList();
+		$conditions = AggrigateConditions(func_get_args(), $switchlist);
 		
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				
-				$arg = func_get_arg($i);
-				
-				if( is_array($arg) ) {
-					$conditions .= $arg[0];
-					$switchlist->addSwitch($arg[1]);
-				} elseif ( $arg ) {
-					$conditions .= $arg;
-				}
-				
-			}
-		}
 		OrReplace($conditions, $switchlist,$this->NestSwitch);
 		return new ElseClass($this->Suppressed, $this->IfText, $this->ElseSwitch, $this->NestSwitch, $conditions, $switchlist, $this->LineNumber, $this->PrependState );
 		
@@ -109,17 +86,8 @@ class ElseClass{
 	
 	public function then() {
 		
-		// Accumulate arguments into actions string
-		$argnum = func_num_args();
-		$actions = '';
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg && $arg != 'e' ) {
-					$actions .= $arg;
-				}
-			}
-		}
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
 		
 		$text = &$this->IfText;
 		$elseswitch = $this->ElseSwitch;
@@ -132,7 +100,7 @@ class ElseClass{
 		$elseset = false;
 		$elseAction = '';
 		$elsekill = '';
-		if ( func_get_arg($argnum-1) == 'e' ) {
+		if ( func_get_arg(func_num_args()-1) === e ) {
 			$elseset = true;
 			//$elseswitch = new TempSwitch();
 			$elseAction = $elseswitch->set();
@@ -205,4 +173,3 @@ class ElseClass{
 
 
 
-?>

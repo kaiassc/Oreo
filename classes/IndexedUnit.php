@@ -344,13 +344,26 @@ class IndexedUnit extends UnitGroup{
 	}
 	
 	
+	// UnitType is the specified unit/unitid
+	public function isUnitType($unit){
+		if(is_string($unit)){
+			ValidUnitCheck($unit);
+			$unit = GetUnitID($unit);
+		}
+		if(!is_int($unit)){
+			Error("Expecting UnitID integer or a Unit's string name");
+		}
+		$player = IndexedUnit::convertToEPD(19050);
+		return Memory($player, Exactly, $unit);
+	}
+	
 	
 	/////
     // ACTIONS
     //
 	
     //GET HEALTH!
-	public function getHealth($dc, $maxvalue){
+	public function getHealth(Deathcounter $dc, $maxvalue){
 		
         $text = '';
         $ignore = new TempSwitch();
@@ -373,7 +386,7 @@ class IndexedUnit extends UnitGroup{
 
 
     //GET CURRENT X COORDINATE!
-	public function getCurrentXCoordinate($dc, $maxtile){
+	public function getCurrentXCoordinate(Deathcounter $dc, $maxtile){
 
         $text = '';
         $ignore = new TempSwitch();
@@ -394,7 +407,7 @@ class IndexedUnit extends UnitGroup{
         return $text;
     }
     //GET CURRENT Y COORDINATE!
-    public function getCurrentYCoordinate($dc, $maxtile){
+    public function getCurrentYCoordinate(Deathcounter $dc, $maxtile){
 
         $text = '';
         $ignore = new TempSwitch();
@@ -436,7 +449,7 @@ class IndexedUnit extends UnitGroup{
         return $text;
     }
 	
-    public function getRealAngle($min,$max,$dc){
+    public function getRealAngle($min, $max, Deathcounter $dc){
 	    
         $text = '';
         $ignore = new TempSwitch();
@@ -477,7 +490,7 @@ class IndexedUnit extends UnitGroup{
 
 
     //GET ATTACK COOLDOWN!
-    public function getAttackCooldown($dc, $maxvalue){
+    public function getAttackCooldown(Deathcounter $dc, $maxvalue){
 
         $text = '';
         $ignore = new TempSwitch();
@@ -500,7 +513,7 @@ class IndexedUnit extends UnitGroup{
 
 
     //GET Y ORDER COORDINATE!
-    public function getYOrderCoordinate($dc, $maxvalue, $by = 1){
+    public function getYOrderCoordinate(Deathcounter $dc, $maxvalue, $by = 1){
 	    
         $text = '';
         $ignore = new TempSwitch();
@@ -521,7 +534,7 @@ class IndexedUnit extends UnitGroup{
         return $text;
     }
 	
-    public function getYOrderRange($dc, $mintile, $maxtile, $by = 1){
+    public function getYOrderRange(Deathcounter $dc, $mintile, $maxtile, $by = 1){
 	    
         $text = '';
         $ignore = new TempSwitch();
@@ -545,7 +558,7 @@ class IndexedUnit extends UnitGroup{
 	
     //GET TARGET INDEX!
     //RETURNS 1700 IF NOT ATTACKING ANYTHING, 1701 IF THE UNIT IS OUT OF THE $maxvalue BOUNDS
-    public function getTargetID($dc, $lowerbound, $upperbound = null){
+    public function getTargetID(Deathcounter $dc, $lowerbound, $upperbound = null){
 	    
 	    $maxvalue = 1699;
 	    $minvalue = 0;
@@ -606,7 +619,7 @@ class IndexedUnit extends UnitGroup{
 	
 	//CHECK TARGET INDEX!
     //SETS SWITCH IF THE DC MATCHES THE TARGET INDEX
-    public function checkTargetID($dc, $switch, $lowerbound, $upperbound = null){
+    public function checkTargetID(Deathcounter $dc, PermSwitch $switch, $lowerbound, $upperbound = null){
 	    
 	    $maxvalue = 1699;
 	    $minvalue = 0;
@@ -631,7 +644,7 @@ class IndexedUnit extends UnitGroup{
         return $text;
     }
 	
-	public function checkSpecificTargetIDs(Deathcounter $dc, $switch, Array $nums){
+	public function checkSpecificTargetIDs(Deathcounter $dc, PermSwitch $switch, Array $nums){
 	    $text = '';
 		
 		foreach($nums as $num){
@@ -648,7 +661,7 @@ class IndexedUnit extends UnitGroup{
 	
 	
     //GET SHIELD!
-    public function getShield($dc, $maxvalue){
+    public function getShield(Deathcounter $dc, $maxvalue){
 	    
         $text = '';
         $ignore = new TempSwitch();
@@ -671,7 +684,7 @@ class IndexedUnit extends UnitGroup{
 	
 	
     //GET KILL COUNT!
-    public function getKillCount($dc, $maxvalue=255){
+    public function getKillCount(Deathcounter $dc, $maxvalue=255){
 
         $text = '';
         $ignore = new TempSwitch();

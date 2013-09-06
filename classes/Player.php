@@ -72,20 +72,10 @@ class Player{
 		if ( $this->PlayerString ) {
 			$TriggerOwner = $this->PlayerString;
 		}
-		$argnum = func_num_args();
-		$conditions = '';
+		
+		// Accumulate conditions
 		$switchlist = new SwitchList();
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if( is_array($arg) ) {
-					$conditions .= $arg[0];
-					$switchlist->addSwitch($arg[1]);
-				} elseif ( $arg ) {
-					$conditions .= $arg;
-				}
-			}
-		}
+		$conditions = AggrigateConditions(func_get_args(), $switchlist);
 		
 		// Analysis handling
 		global $AnalysisRoot;
@@ -126,19 +116,15 @@ class Player{
 	
 	// ALWAYS
 	public function always() {
-		$actions = '';
+		
 		global $TriggerOwner;
 		if ( $this->PlayerString ) {
 			$TriggerOwner = $this->PlayerString;
 		}
+		
 		// Accumulate actions
-		$argnum = func_num_args();
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg ) { $actions .= $arg; }
-			}
-		}
+		$actions = AggrigateActions(func_get_args());
+		
 		$text = 	HEADING().Always().ACTIONS().PreserveTrigger().$actions.ENDT();
 		OutputTriggers($text, null, $this->PrependState);
 		
@@ -159,21 +145,16 @@ class Player{
 	
 	// JUSTONCE
 	public function justonce() {
-		$actions = '';
+		
 		global $TriggerOwner;
 		if ( $this->PlayerString ) {
 			$TriggerOwner = $this->PlayerString;
 		}
-		// Accumulate actions
-		$argnum = func_num_args();
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg ) { $actions .= $arg; }
-			}
-		}
-		$text = 	HEADING().Always().ACTIONS().$actions.ENDT();
 		
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
+		
+		$text = 	HEADING().Always().ACTIONS().$actions.ENDT();
 		OutputTriggers($text, null, $this->PrependState);
 		
 		// Analysis handling
@@ -193,21 +174,16 @@ class Player{
 	
 	// NEVER
 	public function never() {
-		$actions = '';
+		
 		global $TriggerOwner;
 		if ( $this->PlayerString ) {
 			$TriggerOwner = $this->PlayerString;
 		}
-		// Accumulate actions
-		$argnum = func_num_args();
-		if ( $argnum > 0 ) { 
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg ) { $actions .= $arg; }
-			}
-		}
-		$text = 	HEADING().Never().ACTIONS().$actions.ENDT();
 		
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
+		
+		$text = 	HEADING().Never().ACTIONS().$actions.ENDT();
 		OutputTriggers($text, null, $this->PrependState);
 		
 		// Analysis handling

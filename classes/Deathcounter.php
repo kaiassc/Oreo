@@ -213,47 +213,6 @@ class Deathcounter {
 	
 	
 	/////
-	// OVERLOADING
-	///
-	
-	
-	public function __bw_not(){
-		return $this->exactly(0);
-	}
-	
-	public function __bool_not(){
-		Error("__bool_not");
-		return $this->exactly(0);
-	}
-	
-	public function __assign(){
-		Error("__assign");
-	}
-	
-	public function __is_equal($value){
-		if( is_int($value) ){
-			return $this->setTo($value);
-		}
-		
-		
-		
-	}
-	
-	public function __assign_add($value){
-		return $this->add($value);
-	}
-	
-	public function __assign_sub($value){
-		return $this->sub($value);
-	}
-	
-	public function __post_int(){
-		Error("hey!");
-		return $this->add(1);
-	}
-	
-
-	/////
 	// ACTIONS
 	///
 
@@ -1299,7 +1258,7 @@ class Deathcounter {
 
 		
 		//DEATHCOUNTER-DEATHCOUNTER MULTIPLICATION
-		$tempdc1 = new TempDC( $var2->Max );
+		$tempdc1 = new TempDC( $var1->Max );
 		
 		$maxpower1 = getBinaryPower( $var1->Max );
 		$maxpower2 = getBinaryPower( $var2->Max );

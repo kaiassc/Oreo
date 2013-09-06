@@ -26,18 +26,9 @@ class IfClass{
 	}
 	
 	public function then($actions = null) {
-		// Accumulate arguments into actions string
-		$argnum = func_num_args();
 		
-		if ( $argnum > 0 ) { 
-			$actions = '';
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg && $arg != e ) {
-					$actions .= $arg;
-				}
-			}
-		}
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
 		
 		$HEADING  = HEADING();
 		$ACTIONS  = ACTIONS();
@@ -47,7 +38,7 @@ class IfClass{
 		// If the last argument is 'e'
 		$elseset = false;
 		$elseAction = null;
-		if ( func_get_arg($argnum-1) == e ) {
+		if ( func_get_arg(func_num_args()-1) == e ) {
 			$elseset = true;
 			$elseswitch = new TempSwitch();
 			$elseAction = 	$elseswitch->set();
@@ -126,18 +117,9 @@ class IfClass{
 	}
 	
 	public function then_justonce($actions) {
-		// Accumulate arguments into actions string
-		$argnum = func_num_args();
 		
-		if ( $argnum > 0 ) { 
-			$actions = '';
-			for ( $i=0; $i <= $argnum; $i++ ) {
-				$arg = func_get_arg($i);
-				if ( $arg && $arg != e ) {
-					$actions .= $arg;
-				}
-			}
-		}
+		// Accumulate actions
+		$actions = AggrigateActions(func_get_args());
 		
 		$HEADING  = HEADING();
 		$ACTIONS  = ACTIONS();
@@ -146,7 +128,7 @@ class IfClass{
 		// If the last argument is 'e'
 		$elseset = false;
 		$elseAction = null;
-		if ( func_get_arg($argnum-1) == e ) {
+		if ( func_get_arg(func_num_args()-1) == e ) {
 			$elseset = true;
 			$elseswitch = new TempSwitch();
 			$elseAction = 	$elseswitch->set();
@@ -227,4 +209,3 @@ class IfClass{
 
 
 
-?>

@@ -443,6 +443,19 @@
 	}
 	function ModifyHealth($player, $unit, $n, $location, $percent) {
 		if( is_string($player) ) {
+			if( $n instanceof Deathcounter ){
+				
+				$text = '';
+				$min = $n->Min;
+				$max = $n->Max;
+				
+				for($i=$min; $i<=$max; $i++){
+					$text .= _if( $n->exactly($i) )->then(
+						ModifyHealth($player, $unit, $i, $location, $percent),
+					'');
+				}
+				
+			}
 			if( $percent instanceof Deathcounter ){
 				/* @var Deathcounter $percent */
 				
@@ -497,6 +510,19 @@
 	}
 	function ModifyEnergy($player, $unit, $n, $location, $percent) { 
 		if( is_string($player) ) {
+			if( $n instanceof Deathcounter ){
+				
+				$text = '';
+				$min = $n->Min;
+				$max = $n->Max;
+				
+				for($i=$min; $i<=$max; $i++){
+					$text .= _if( $n->exactly($i) )->then(
+						ModifyEnergy($player, $unit, $i, $location, $percent),
+					'');
+				}
+				
+			}
 			if( $percent instanceof Deathcounter ){
 				/* @var Deathcounter $percent */
 				
@@ -532,6 +558,19 @@
 	}
 	function ModifyResource($player, $numberOfSources, $resourceAmount, $location) {
 		if( is_string($player) ) {
+			if( $numberOfSources instanceof Deathcounter ){
+				
+				$text = '';
+				$min = $numberOfSources->Min;
+				$max = $numberOfSources->Max;
+				
+				for($i=$min; $i<=$max; $i++){
+					$text .= _if( $numberOfSources->exactly($i) )->then(
+						ModifyResource($player, $i, $resourceAmount, $location),
+					'');
+				}
+				
+			}
 			if( $resourceAmount instanceof Deathcounter ){
 				/* @var Deathcounter $resourceAmount */
 				
@@ -568,6 +607,19 @@
 	}
 	function ModifyShield($player, $unit, $n, $location, $percent) { 
 		if( is_string($player) ) {
+			if( $n instanceof Deathcounter ){
+				
+				$text = '';
+				$min = $n->Min;
+				$max = $n->Max;
+				
+				for($i=$min; $i<=$max; $i++){
+					$text .= _if( $n->exactly($i) )->then(
+						ModifyShield($player, $unit, $i, $location, $percent),
+					'');
+				}
+				
+			}
 			if( $percent instanceof Deathcounter ){
 				/* @var Deathcounter $percent */
 				

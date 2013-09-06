@@ -61,20 +61,8 @@ class Event{
 			$this->State = new Deathcounter($Player);
 			
 			// Accumulate conditions
-			$conditions = ''; 
 			$switchlist = new SwitchList();
-			$argnum = func_num_args();
-			if ( $argnum > 0 ) { 
-				for ( $i=0; $i < $argnum; $i++ ) {
-					$arg = func_get_arg($i);
-					if( is_array($arg) ) {
-						$conditions .= $arg[0];
-						$switchlist->addSwitch($arg[1]);
-					} elseif ( $arg ) {
-						$conditions .= $arg;
-					}
-				}
-			}
+			$conditions = AggrigateConditions(func_get_args(), $switchlist);
 			
 			// Create state handling triggers
 			$Player->_if( $conditions )->then(
@@ -98,20 +86,8 @@ class Event{
 		} else {
 			
 			// Accumulate conditions
-			$conditions = ''; 
 			$switchlist = new SwitchList();
-			$argnum = func_num_args();
-			if ( $argnum > 0 ) { 
-				for ( $i=0; $i < $argnum; $i++ ) {
-					$arg = func_get_arg($i);
-					if( is_array($arg) ) {
-						$conditions .= $arg[0];
-						$switchlist->addSwitch($arg[1]);
-					} elseif ( $arg ) {
-						$conditions .= $arg;
-					}
-				}
-			}
+			$conditions = AggrigateConditions(func_get_args(), $switchlist);
 			
 			global $PrependedEvents;
 			foreach($PrependedEvents as $event){
